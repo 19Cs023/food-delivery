@@ -1,0 +1,63 @@
+.signout-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 80vh;
+  padding: 20px;
+}
+
+.signout-card {
+  background-color: #ffffff;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  max-width: 400px;
+  width: 100%;
+}
+
+.signout-card h2 {
+  margin-top: 0;
+  color: #333333;
+}
+
+.signout-card p {
+  color: #555555;
+  margin-bottom: 25px;
+}
+
+.signout-actions {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+.btn-cancel {
+  padding: 10px 20px;
+  background-color: #f8f9fa;
+  color: #333333;
+  border: 1px solid #cccccc;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-cancel:hover {
+  background-color: #e2e6ea;
+}
+
+.btn-confirm {
+  padding: 10px 20px;
+  background-color: #dc3545; /* Red color for destructive action */
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-confirm:hover {
+  background-color: #c82333;
+}

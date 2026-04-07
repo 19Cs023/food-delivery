@@ -1,0 +1,123 @@
+.hero-container {
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4rem 2rem;
+  background-color: #ffffff;
+  min-height: calc(100vh - 80px); /* Adjust based on your header's height */
+}
+
+@media (min-width: 768px) {
+  .hero-container {
+    flex-direction: row;
+    padding: 5rem 10%;
+  }
+}
+
+.hero-content {
+  flex: 1;
+  max-width: 600px;
+  text-align: center;
+}
+
+@media (min-width: 768px) {
+  .hero-content {
+    text-align: left;
+    padding-right: 3rem;
+  }
+}
+
+.hero-title {
+  font-size: 2.5rem;
+  color: #333333;
+  margin-bottom: 1rem;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+@media (min-width: 768px) {
+  .hero-title {
+    font-size: 3.5rem;
+  }
+}
+
+.hero-subtitle {
+  font-size: 1.1rem;
+  color: #555555;
+  margin-bottom: 2rem;
+  line-height: 1.6;
+}
+
+.hero-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+@media (min-width: 768px) {
+  .hero-buttons {
+    justify-content: flex-start;
+  }
+}
+
+.btn-primary, .btn-secondary {
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  font-weight: bold;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  font-size: 1rem;
+  text-align: center;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  color: #ffffff;
+  border: 2px solid #007bff;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+  border-color: #0056b3;
+}
+
+.btn-secondary {
+  background-color: transparent;
+  color: #007bff;
+  border: 2px solid #007bff;
+}
+
+.btn-secondary:hover {
+  background-color: #f8f9fa;
+}
+
+.hero-image {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 3rem;
+}
+
+@media (min-width: 768px) {
+  .hero-image {
+    margin-bottom: 0;
+  }
+}
+
+.image-placeholder {
+  width: 100%;
+  max-width: 500px;
+  aspect-ratio: 4 / 3;
+  background-color: #f1f3f5;
+  border: 2px dashed #ced4da;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #adb5bd;
+  font-size: 1.2rem;
+  font-weight: 600;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}

@@ -1,12 +1,47 @@
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+
+// Layout
+import Navigation from './layout/Navigation';
+import Footer from './layout/Footer';
+
+// Components
+import Hero from './components/Hero';
+import SignIn from './components/SignIn';
+import Register from './components/Register';
+import SignOut from './components/SignOut';
+import SearchResults from './components/SearchResults';
+import UserAccount from './components/UserAccount';
+
+// Pages
+
+
+import './App.css';
+
 function App() {
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-      <div className="bg-white p-8 rounded-lg shadow-lg max-w-md w-full text-center">
-        <h1 className="text-3xl font-bold text-orange-500 mb-4">React Food Delivery!</h1>
-        <p className="text-gray-600">Frontend is successfully scaffolded with Vite and Tailwind CSS.</p>
+    <Router>
+      <div className="App" style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+        <Navigation />
+
+        <main className="main-content" style={{ flex: 1 }}>
+          <Routes>
+            {/* Public Routes */}
+            <Route path="/" element={<Hero />} />
+            <Route path="/login" element={<SignIn />} />
+            <Route path="/signin" element={<SignIn />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/signout" element={<SignOut />} />
+            <Route path="/details" element={<AllCategories />} />
+            <Route path="/search" element={<SearchResults />} />
+            <Route path="/profile" element={<UserAccount />} />
+          </Routes>
+        </main>
+
+        <Footer />
       </div>
-    </div>
-  )
+    </Router>
+  );
 }
 
-export default App
+export default App;

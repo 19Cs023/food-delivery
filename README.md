@@ -1,6 +1,6 @@
-# Food Delivery App (MERN Stack)
+# MERN skeliton 
 
-This is a full-stack MERN (MongoDB, Express, React, Node.js) application for a food delivery restaurant.
+This is a full-stack MERN (MongoDB, Express, React, Node.js) app
 
 ## Project Structure
 
