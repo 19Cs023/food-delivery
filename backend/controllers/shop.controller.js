@@ -2,7 +2,7 @@ import Shop from '../models/shop.js'
 import extend from 'lodash/extend'
 import formidable from 'formidable'
 import fs from 'fs'
-const defaultImage = '/public/default.png'
+const defaultImage = '/public/restaurant.png'
 
 const create = (req, res) => {
   let form = formidable({ keepExtensions: true })
