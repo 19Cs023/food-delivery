@@ -7,6 +7,8 @@ dotenv.config();
 import userRoutes from './routes/user.route.js';
 import authRoutes from './routes/auth.route.js';
 import commentRoutes from './routes/comments.route.js';
+import orderRoutes from './routes/order.route.js';
+import productRoutes from './routes/product.route.js';
 
 const app = express();
 
@@ -16,6 +18,9 @@ app.use(express.json());
 app.use('/', userRoutes)
 app.use('/', authRoutes)
 app.use('/', commentRoutes)
+app.use('/', orderRoutes)
+app.use('/', productRoutes)
+
 const PORT = process.env.PORT || 5000;
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/tech-blogs';
 

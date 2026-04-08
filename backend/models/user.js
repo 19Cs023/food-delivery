@@ -1,21 +1,22 @@
+// @ts-nocheck
 import mongoose from 'mongoose'
 import crypto from 'crypto'
 const UserSchema = new mongoose.Schema({
   name: {
     type: String,
     trim: true,
-    required: 'Name is required'
+    required:[true, 'Name is required']
   },
   email: {
     type: String,
     trim: true,
-    unique: 'Email already exists',
+    unique: [true, 'Email already exists'],
     match: [/.+\@.+\..+/, 'Please fill a valid email address'],
-    required: 'Email is required'
+    required: [true, 'Email is required']
   },
   hashed_password: {
     type: String,
-    required: "Password is required"
+    required: [true, 'Password is required']
   },
   salt: String,
   updated: Date,
@@ -43,7 +44,7 @@ UserSchema.path('hashed_password').validate(function(v) {
   if (this.isNew && !this._password) {
     this.invalidate('password', 'Password is required')
   }
-}, null)
+})
 
 UserSchema.methods = {
   authenticate: function(plainText) {

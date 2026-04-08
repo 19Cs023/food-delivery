@@ -1,9 +1,10 @@
+// @ts-nocheck
 import mongoose from 'mongoose'
 const CommentSchema = new mongoose.Schema({
   title: {
     type: String,
     trim: true,
-    required: 'Title is required'
+    required: [true, 'Title is required']
   },
   incurred_on: {
     type: Date,
@@ -12,7 +13,7 @@ const CommentSchema = new mongoose.Schema({
   content: {
     type: String,
     trim: true,
-    required: 'Content is required'
+    required: [true, 'Content is required']
   },
   updated: Date,
   created: {
