@@ -1,5 +1,5 @@
 import Shop from '../models/shop.js'
-import extend from 'lodash/extend'
+import extend from 'lodash/extend.js'
 import formidable from 'formidable'
 import fs from 'fs'
 const defaultImage = '/public/restaurant.png'

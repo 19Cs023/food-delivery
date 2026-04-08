@@ -81,11 +81,21 @@ const remove = async (req, res) => {
   }
 }
 
+const stripeCustomer = (req, res, next) => {
+  next()
+}
+
+const createCharge = (req, res, next) => {
+  next()
+}
+
 export default {
   create,
   userByID,
   read,
   list,
   remove,
-  update
+  update,
+  stripeCustomer,
+  createCharge
 }  

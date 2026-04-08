@@ -1,6 +1,6 @@
 // @ts-nocheck
 import Product from '../models/product.js'
-import extend from 'lodash/extend'
+import extend from 'lodash/extend.js'
 import formidable from 'formidable'
 import fs from 'fs'
 const defaultImage = 'backend/public/restaurant-logo-images-vector.jpg'
