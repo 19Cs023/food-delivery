@@ -20,6 +20,13 @@ const UserSchema = new mongoose.Schema({
   },
   salt: String,
   updated: Date,
+  is_shop_keeper: {
+    type: Boolean,
+    default: false
+  },
+  stripe_customer: {
+    type: String
+  },
   created: {
     type: Date,
     default: Date.now

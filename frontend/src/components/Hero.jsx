@@ -6,21 +6,22 @@ function Hero() {
   return (
     <section className="hero-container">
       <div className="hero-content">
-        <h1 className="hero-title">Get knowledge and Share knowledge</h1>
+        <h1 className="hero-title">Delicious Food, Delivered Faster</h1>       
         <p className="hero-subtitle">
-          get the knowlege you need and share the knowlege you have with others.
-          you can write and read the tech article to improve your skills and share your experience with others.
+          Craving your favorite meal? Order from top local restaurants and get it delivered 
+          hot and fresh right to your doorstep. Eat great today!
         </p>
         <div className="hero-buttons">
-          <Link to="/register" className="btn-primary">Get Started</Link>
-          <Link to="/login" className="btn-secondary">Log In</Link>
+          <Link to="/dashboard" className="btn-primary" style={{ backgroundColor: '#4CAF50', border: 'none' }}>Order Now</Link>
+          <Link to="/register" className="btn-secondary">Sign Up</Link>
         </div>
       </div>
       <div className="hero-image">
-        {/* Placeholder for an illustration or dashboard preview */}
-        <div className="image-placeholder">
-          <span>tech article dashboard</span>
-        </div>
+        <img 
+          src="/hero.png" 
+          alt="Food Delivery Hero" 
+          style={{ width: '100%', height: 'auto', borderRadius: '8px', objectFit: 'cover' }} 
+        />
       </div>
     </section>
   );

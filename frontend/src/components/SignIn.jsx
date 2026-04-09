@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
+import { useAppContext } from '../context/AppContext';
 import './SignIn.css';
 
 const SignIn = () => {
@@ -12,6 +13,8 @@ const SignIn = () => {
   const [successMsg, setSuccessMsg] = useState('');
   const navigate = useNavigate();
 
+  const { login } = useAppContext();
+
   const handleChange = (e) => {
     setErrorMsg('');
     const { name, value } = e.target;
@@ -22,18 +25,18 @@ const SignIn = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault(); 
+    e.preventDefault();
     try {
       const response = await axios.post('http://localhost:5000/api/auth/signin', {
         email: formData.email,
         password: formData.password
       });
-      // Save token and user details based on backend payload
-      localStorage.setItem('token', response.data.token);
-      localStorage.setItem('user', JSON.stringify(response.data.user));
-      
+
+      // Save using AppContext so it updates globally
+      login(response.data.user, response.data.token);
+
       setSuccessMsg(`Welcome back, ${response.data.user.name}!`);
-      
+
       setTimeout(() => {
         navigate('/dashboard');
       }, 1000);

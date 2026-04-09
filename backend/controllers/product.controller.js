@@ -3,7 +3,8 @@ import Product from '../models/product.js'
 import extend from 'lodash/extend.js'
 import formidable from 'formidable'
 import fs from 'fs'
-const defaultImage = 'backend/public/restaurant-logo-images-vector.jpg'
+import path from 'path'
+const defaultImage = '/public/restaurant-logo-images-vector.jpg'
 
 const create = (req, res, next) => {
   let form = formidable({ keepExtensions: true })
@@ -13,11 +14,18 @@ const create = (req, res, next) => {
         message: "Image could not be uploaded"
       })
     }
-    let product = new Product(fields)
+    
+    let parsedFields = {};
+    for (let key in fields) {
+      parsedFields[key] = Array.isArray(fields[key]) ? fields[key][0] : fields[key];
+    }
+
+    let product = new Product(parsedFields)
     product.shop= req.shop
     if(files.image){
-      product.image.data = fs.readFileSync(files.image.path)
-      product.image.contentType = files.image.type
+      let imageFile = Array.isArray(files.image) ? files.image[0] : files.image;
+      product.image.data = fs.readFileSync(imageFile.filepath)
+      product.image.contentType = imageFile.mimetype
     }
     try {
       let result = await product.save()
@@ -70,12 +78,19 @@ const update = (req, res) => {
         message: "Photo could not be uploaded"
       })
     }
+    
+    let parsedFields = {};
+    for (let key in fields) {
+      parsedFields[key] = Array.isArray(fields[key]) ? fields[key][0] : fields[key];
+    }
+
     let product = req.product
-    product = extend(product, fields)
+    product = extend(product, parsedFields)
     product.updated = Date.now()
     if(files.image){
-      product.image.data = fs.readFileSync(files.image.path)
-      product.image.contentType = files.image.type
+      let imageFile = Array.isArray(files.image) ? files.image[0] : files.image;
+      product.image.data = fs.readFileSync(imageFile.filepath)
+      product.image.contentType = imageFile.mimetype
     }
     try {
       let result = await product.save()
@@ -91,7 +106,7 @@ const update = (req, res) => {
 const remove = async (req, res) => {
   try{
     let product = req.product
-    let deletedProduct = await product.remove()
+    let deletedProduct = await product.deleteOne()
     res.json(deletedProduct)
   
   } catch (err) {

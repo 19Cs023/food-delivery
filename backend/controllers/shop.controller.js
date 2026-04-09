@@ -2,17 +2,23 @@ import Shop from '../models/shop.js'
 import extend from 'lodash/extend.js'
 import formidable from 'formidable'
 import fs from 'fs'
-const defaultImage = '/public/restaurant.png'
+import path from 'path'
+const defaultImage = '/public/reatarent.avif'
 
 const create = (req, res) => {
   let form = formidable({ keepExtensions: true })
   form.parse(req, async (err, fields, files) => {
     if (err) {
-      res.status(400).json({
-        message: "Image could not be uploaded"
-      })
+      res.status(400).json({ message: "Image could not be uploaded" })
     }
-    let shop = new Shop(fields)
+    
+    // Formidable v3 returns arrays for fields. We need to extract the first item.
+    let parsedFields = {};
+    for (let key in fields) {
+      parsedFields[key] = Array.isArray(fields[key]) ? fields[key][0] : fields[key];
+    }
+    
+    let shop = new Shop(parsedFields)
     shop.owner= req.profile
     if(files.image){
       let imageFile = Array.isArray(files.image) ? files.image[0] : files.image
@@ -67,12 +73,16 @@ const update = (req, res) => {
   let form = formidable({ keepExtensions: true })
   form.parse(req, async (err, fields, files) => {
     if (err) {
-      res.status(400).json({
-        message: "Photo could not be uploaded"
-      })
+      res.status(400).json({ message: "Photo could not be uploaded" })
     }
+    
+    let parsedFields = {};
+    for (let key in fields) {
+      parsedFields[key] = Array.isArray(fields[key]) ? fields[key][0] : fields[key];
+    }
+
     let shop = req.shop
-    shop = extend(shop, fields)
+    shop = extend(shop, parsedFields)
     shop.updated = Date.now()
     if(files.image){
       let imageFile = Array.isArray(files.image) ? files.image[0] : files.image

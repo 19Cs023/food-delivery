@@ -9,6 +9,7 @@ import authRoutes from './routes/auth.route.js';
 import commentRoutes from './routes/comments.route.js';
 import orderRoutes from './routes/order.route.js';
 import productRoutes from './routes/product.route.js';
+import shopRoutes from './routes/shop.route.js';
 
 const app = express();
 
@@ -20,6 +21,7 @@ app.use('/', authRoutes)
 app.use('/', commentRoutes)
 app.use('/', orderRoutes)
 app.use('/', productRoutes)
+app.use('/', shopRoutes)
 
 const PORT = process.env.PORT || 5000;
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/tech-blogs';

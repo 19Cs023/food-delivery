@@ -12,7 +12,15 @@ const signin = async (req, res) => {
     }
     const token = jwt.sign({ _id: user._id }, 'secret');
     res.cookie('t', token, { expire: new Date() + 9999 });
-    return res.json({ token, user: { _id: user._id, name: user.name, email: user.email }});
+    return res.json({ 
+      token, 
+      user: { 
+        _id: user._id, 
+        name: user.name, 
+        email: user.email,
+        is_shop_keeper: user.is_shop_keeper
+      }
+    });
   } catch (err) {
     return res.status(401).json({ error: 'Could not sign in' });
   }

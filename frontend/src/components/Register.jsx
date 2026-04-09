@@ -8,7 +8,8 @@ const Register = () => {
     name: '',
     email: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    is_shop_keeper: false
   });
   const [errorMsg, setErrorMsg] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
@@ -16,10 +17,10 @@ const Register = () => {
 
   const handleChange = (e) => {
     setErrorMsg('');
-    const { name, value } = e.target;
+    const { name, value, type, checked } = e.target;
     setFormData({
       ...formData,
-      [name]: value
+      [name]: type === 'checkbox' ? checked : value
     });
   };
 
@@ -31,11 +32,12 @@ const Register = () => {
     }
     
     try {
-      // Matches userCtrl.create in backend expecting { name, email, password }
+      // Matches userCtrl.create in backend expecting { name, email, password, is_shop_keeper }
       const response = await axios.post('http://localhost:5000/api/users', {
         name: formData.name,
         email: formData.email,
-        password: formData.password
+        password: formData.password,
+        is_shop_keeper: formData.is_shop_keeper
       });
       
       // Backend responds with { message: "Successfully signed up!" }
@@ -113,6 +115,18 @@ const Register = () => {
             required
             minLength="6"
           />
+        </div>
+
+        <div className="form-group checkbox-group" style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
+          <input
+            type="checkbox"
+            id="is_shop_keeper"
+            name="is_shop_keeper"
+            checked={formData.is_shop_keeper}
+            onChange={handleChange}
+            style={{ width: 'auto', marginBottom: '0' }}
+          />
+          <label htmlFor="is_shop_keeper" style={{ marginBottom: '0', fontWeight: 'normal' }}>I am a Shop Keeper</label>
         </div>
 
         <button type="submit" className="btn-register">Sign Up</button>

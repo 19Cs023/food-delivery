@@ -7,14 +7,14 @@ const SearchResults = () => {
   const [searchParams] = useSearchParams();
   const query = searchParams.get('q');
   
-  const [blogs, setBlogs] = useState([]);
+  const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchSearchResults = async () => {
       if (!query) {
-        setBlogs([]);
+        setProducts([]);
         setLoading(false);
         return;
       }
@@ -23,8 +23,8 @@ const SearchResults = () => {
       setError(null);
       
       try {
-        const response = await axios.get(`http://localhost:5000/api/blogs/search?searchQuery=${encodeURIComponent(query)}`);
-        setBlogs(response.data);
+        const response = await axios.get(`http://localhost:5000/api/products?search=${encodeURIComponent(query)}`);
+        setProducts(response.data);
       } catch (err) {
         console.error('Error fetching search results:', err);
         setError('Failed to fetch search results.');
@@ -43,21 +43,22 @@ const SearchResults = () => {
     <div className="search-results-container">
       <h2>Search Results for "{query}"</h2>
       
-      {blogs.length === 0 ? (
-        <div className="no-search-results">No articles found matching your query.</div>
+      {products.length === 0 ? (
+        <div className="no-search-results">No products found matching your query.</div>
       ) : (
         <div className="search-blogs-list">
-          {blogs.map(blog => (
-            <div key={blog._id} className="search-blog-card">
-              <Link to={`/blogs/${blog._id}`} className="search-blog-title-link">
-                <h4>{blog.title}</h4>
+          {products.map(product => (
+            <div key={product._id} className="search-blog-card">
+              <Link to={`/product/${product._id}`} className="search-blog-title-link">
+                <h4>{product.name}</h4>
               </Link>
-              <span className="search-blog-tag">{blog.tag}</span>
+              <span className="search-blog-tag">{product.category || 'Food'}</span>
               <p className="search-blog-excerpt">
-                {(blog.content || '').length > 150 ? `${blog.content.substring(0, 150)}...` : blog.content}
+                {(product.description || '').length > 150 ? `${product.description.substring(0, 150)}...` : product.description}
               </p>
               <div className="search-blog-meta">
-                Published: {new Date(blog.created).toLocaleDateString()}
+                Price: ${product.price}
+                {product.shop && ` • Shop: ${product.shop.name}`}
               </div>
             </div>
           ))}

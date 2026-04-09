@@ -1,5 +1,8 @@
 import User from '../models/user.js'
 import extend from 'lodash/extend.js'
+import Stripe from 'stripe'
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || 'sk_test_temp');
 
 const create = async (req, res) => {
   const user = new User(req.body)
@@ -81,12 +84,46 @@ const remove = async (req, res) => {
   }
 }
 
-const stripeCustomer = (req, res, next) => {
-  next()
+const stripeCustomer = async (req, res, next) => {
+  try {
+    let user = req.profile;
+    if (user.stripe_customer) {
+      return next();
+    }
+    const customer = await stripe.customers.create({
+      email: user.email,
+    });
+    user.stripe_customer = customer.id;
+    await user.save();
+    next();
+  } catch (error) {
+    return res.status(400).json({ error: error.message });
+  }
 }
 
-const createCharge = (req, res, next) => {
-  next()
+const createCharge = async (req, res, next) => {
+  try {
+    const charge = await stripe.charges.create({
+      amount: req.body.amount, // Amount should be in cents (e.g., $10 = 1000)
+      currency: "usd",
+      customer: req.profile.stripe_customer,
+      source: req.body.token, // the payment token
+    });
+    req.chargeId = charge.id;
+    next();
+  } catch (error) {
+    return res.status(400).json({ error: error.message });
+  }
+}
+
+const isShopKeeper = (req, res, next) => {
+  const isShopKeeper = req.profile && req.profile.is_shop_keeper;
+  if (!isShopKeeper) {
+    return res.status(403).json({
+      error: "User is not authorized as a shop keeper"
+    });
+  }
+  next();
 }
 
 export default {
@@ -97,5 +134,6 @@ export default {
   remove,
   update,
   stripeCustomer,
-  createCharge
+  createCharge,
+  isShopKeeper
 }  
