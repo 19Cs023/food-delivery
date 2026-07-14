@@ -43,6 +43,7 @@ function App() {
             <Route path="/search" element={<SearchResults />} />
             <Route path="/profile" element={<UserAccount />} />
             <Route path="/account" element={<UserAccount />} />
+            <Route path="/rating/:productId" element={<ProductDetail />} />
 
             {/* Food Delivery specific routes */}
             <Route path="/dashboard" element={<Dashboard />} />

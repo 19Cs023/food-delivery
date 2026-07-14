@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
+import Rating from './Rating';
 import './ProductDetail.css';
 
 const ProductDetail = () => {
@@ -92,6 +93,7 @@ const ProductDetail = () => {
         <button className="back-btn" onClick={() => navigate('/dashboard')}>
           Back to Dashboard
         </button>
+        <Rating productId={product._id} />
       </div>
     </div>
   );
