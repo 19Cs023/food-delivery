@@ -15,7 +15,6 @@ const Dashboard = () => {
   const [shops, setShops] = useState([]);
 
   const fetchProducts = async () => {
-    // Assuming default GET route for products
     try {
       const res = await fetch('http://localhost:5000/api/products');
       const data = await res.json();
@@ -26,7 +25,6 @@ const Dashboard = () => {
   };
 
   const fetchShops = async () => {
-    // Assuming default GET route for shops
     try {
       const res = await fetch('http://localhost:5000/api/shops');
       const data = await res.json();
@@ -37,7 +35,6 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-    // Wrap initial fetch calls in a function to avoid lint warnings about synchronous setState
     const initData = () => {
       fetchProducts();
       fetchShops();
@@ -76,7 +73,8 @@ const Dashboard = () => {
               <div className="card-image">
                 <img
                   className="product-image"
-                  src={product.image || defaultProductImage}
+                  src={product._id ? `http://localhost:5000/api/product/image/${product._id}` : defaultProductImage}
+                  onError={(e) => { e.target.onerror = null; e.target.src = defaultProductImage; }}
                   alt={product.name || 'Product Image'}
                 />
               </div>
@@ -98,7 +96,8 @@ const Dashboard = () => {
               <div className="card-image">
                 <img
                   className="shop-image"
-                  src={shop.image || defaultShopImage}
+                  src={shop._id ? `http://localhost:5000/api/shops/logo/${shop._id}` : defaultShopImage}
+                  onError={(e) => { e.target.onerror = null; e.target.src = defaultShopImage; }}
                   alt={shop.name || 'Shop Image'}
                 />
               </div>

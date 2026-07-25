@@ -6,7 +6,6 @@ dotenv.config();
 
 import userRoutes from './routes/user.route.js';
 import authRoutes from './routes/auth.route.js';
-import commentRoutes from './routes/comments.route.js';
 import orderRoutes from './routes/order.route.js';
 import productRoutes from './routes/product.route.js';
 import shopRoutes from './routes/shop.route.js';
@@ -19,7 +18,6 @@ app.use(express.json());
 // mount routes
 app.use('/', userRoutes)
 app.use('/', authRoutes)
-app.use('/', commentRoutes)
 app.use('/', orderRoutes)
 app.use('/', productRoutes)
 app.use('/', shopRoutes)

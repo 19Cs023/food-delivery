@@ -25,6 +25,7 @@ router.route('/api/products/:productId')
 
 router.route('/api/product/image/:productId')
   .get(productCtrl.photo, productCtrl.defaultPhoto)
+  
 router.route('/api/product/defaultphoto')
   .get(productCtrl.defaultPhoto)
 
