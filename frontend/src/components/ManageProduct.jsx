@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useAppContext } from '../context/AppContext';
-import { useNavigate, useParams, Link } from 'react-router-dom';
+import {  useParams, Link } from 'react-router-dom';
 import axios from 'axios';
 
 const ManageProduct = () => {
   const { user, token } = useAppContext();
-  const navigate = useNavigate();
   const { shopId } = useParams();
   
   const [products, setProducts] = useState([]);
@@ -13,20 +12,20 @@ const ManageProduct = () => {
   const [errorMsg, setErrorMsg] = useState('');
 
   useEffect(() => {
-    fetchProducts();
-  }, [shopId]);
-
   const fetchProducts = async () => {
     try {
       setLoading(true);
       const res = await axios.get(`http://localhost:5000/api/products/by/${shopId}`);
       setProducts(res.data);
     } catch (err) {
-      setErrorMsg('Could not fetch products for this shop');
+      setErrorMsg('Could not fetch products for this shop', err.response?.data?.error || err.message);
     } finally {
       setLoading(false);
     }
   };
+
+  fetchProducts();
+}, [shopId]);
 
   const removeProduct = async (productId) => {
     if (window.confirm("Are you sure you want to delete this product?")) {
