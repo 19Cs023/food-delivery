@@ -42,13 +42,13 @@ const productByID = async (req, res, next, id) => {
   try {
     let product = await Product.findById(id).populate('shop', '_id name').exec()
     if (!product)
-      return res.status('400').json({
+      return res.status(400).json({
         error: "Product not found"
       })
     req.product = product
     next()
   } catch (err) {
-    return res.status('400').json({
+    return res.status(400).json({
       error: "Could not retrieve product"
     })
   }

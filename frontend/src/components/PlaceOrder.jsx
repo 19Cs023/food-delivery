@@ -8,7 +8,7 @@ const PlaceOrder = () => {
   const navigate = useNavigate();
   
   // Checkout Fields
-  const [address, setAddress] = useState('');
+  const [address, setAddress] = useState({ street: '', city: '', pincode: '' });
   const [customerName, setCustomerName] = useState(user ? user.name : '');
   const [customerEmail, setCustomerEmail] = useState(user ? user.email : '');
   
@@ -26,8 +26,8 @@ const PlaceOrder = () => {
       return;
     }
 
-    if (!address.trim()) {
-      alert('Please provide a delivery address.');
+    if (!address.street.trim() || !address.city.trim() || !address.pincode.trim()) {
+      alert('Please provide your street, city, and pin code.');
       return;
     }
 
@@ -38,7 +38,7 @@ const PlaceOrder = () => {
       // 1. Format the items array precisely for the backend
       // order.controller.js and product.controller.js expect "products" -> [{ product: { _id }, quantity: 1, shop: "shopId" }]
       const orderProducts = cart.map(item => ({
-        product: item._id, // Matches product._id
+        product: { _id: item._id },
         quantity: item.quantity,
         shop: item.shop?._id || item.shop // Ensures orders can be tracked by shop
       }));
@@ -50,7 +50,9 @@ const PlaceOrder = () => {
           customer_name: customerName,
           customer_email: customerEmail,
           delivery_address: {
-            street: address,
+            street: address.street,
+            city: address.city,
+            pincode: address.pincode,
           },
           total_price: cartTotal
         },
@@ -137,11 +139,32 @@ const PlaceOrder = () => {
 
         <div className="form-group">
           <label>Delivery Address</label>
-          <textarea 
+          <textarea
             placeholder="Enter your complete delivery address..."
-            value={address}
-            onChange={(e) => setAddress(e.target.value)} 
+            value={address.street}
+            onChange={(e) => setAddress({ ...address, street: e.target.value })}
             required 
+          />
+        </div>
+
+        <div className="form-group">
+          <label>City</label>
+          <input
+            type="text"
+            value={address.city}
+            onChange={(e) => setAddress({ ...address, city: e.target.value })}
+            required
+          />
+        </div>
+
+        <div className="form-group">
+          <label>Pin Code</label>
+          <input
+            type="text"
+            inputMode="numeric"
+            value={address.pincode}
+            onChange={(e) => setAddress({ ...address, pincode: e.target.value })}
+            required
           />
         </div>
 

@@ -33,10 +33,26 @@ const listByShop = async (req, res) => {
 
 const update = async (req, res) => {
   try {
-    let order = await Order.updateOne({'products._id':req.body.cartItemId}, {'$set': {
-        'products.$.status': req.body.status
-    }})
-      res.json(order)
+    const { cartItemId, status } = req.body
+    const allowedStatuses = CartItem.schema.path('status').options.enum
+
+    if (!cartItemId || !allowedStatuses.includes(status)) {
+      return res.status(400).json({
+        error: 'A valid cart item id and order status are required'
+      })
+    }
+
+    const order = await Order.findOneAndUpdate(
+      { 'products._id': cartItemId },
+      { $set: { 'products.$.status': status } },
+      { new: true }
+    )
+
+    if (!order) {
+      return res.status(404).json({ error: 'Order item not found' })
+    }
+
+    res.json(order)
   } catch (err){
     return res.status(400).json({
       error: err.message

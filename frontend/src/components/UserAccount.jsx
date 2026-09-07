@@ -7,6 +7,7 @@ const UserAccount = () => {
   const [user, setUser] = useState(null);
   const [orders, setOrders] = useState([]);
   const [shops, setShops] = useState([]);
+  const [shopOrders, setShopOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState('orders');
@@ -24,6 +25,9 @@ const UserAccount = () => {
 
       try {
         const parsedUser = JSON.parse(userStr);
+        if (!parsedUser?._id) {
+          throw new Error('Saved user information is invalid.');
+        }
         setUser(parsedUser);
 
         const config = {
@@ -32,19 +36,54 @@ const UserAccount = () => {
           }
         };
 
-        // Fetch orders
-        const ordersResponse = await axios.get(`http://localhost:5000/api/orders/user/${parsedUser._id}`, config);
-        setOrders(ordersResponse.data);
+        let accountUser = parsedUser;
+        try {
+          const userResponse = await axios.get(`http://localhost:5000/api/users/${parsedUser._id}`, config);
+          accountUser = userResponse.data;
+          setUser(accountUser);
+        } catch (profileError) {
+          console.error('Error refreshing user profile:', profileError);
+        }
 
-        // If shop keeper, fetch shops
-        if (parsedUser.is_shop_keeper) {
-          const shopsResponse = await axios.get(`http://localhost:5000/api/shops/by/${parsedUser._id}`, config);
-          setShops(shopsResponse.data);
+        const requests = [
+          axios.get(`http://localhost:5000/api/orders/user/${parsedUser._id}`, config)
+        ];
+
+        if (accountUser.is_shop_keeper) {
+          requests.push(axios.get(`http://localhost:5000/api/shops/by/${parsedUser._id}`, config));
+        }
+
+        const [ordersResult, shopsResult] = await Promise.allSettled(requests);
+        if (ordersResult.status === 'fulfilled') {
+          setOrders(Array.isArray(ordersResult.value.data) ? ordersResult.value.data : []);
+        } else {
+          console.error('Error fetching user orders:', ordersResult.reason);
+        }
+        if (shopsResult?.status === 'fulfilled') {
+          const loadedShops = Array.isArray(shopsResult.value.data) ? shopsResult.value.data : [];
+          setShops(loadedShops);
+
+          const shopOrderResults = await Promise.allSettled(
+            loadedShops.map((shop) => axios.get(`http://localhost:5000/api/orders/shop/${shop._id}`, config))
+          );
+          setShopOrders(shopOrderResults.flatMap((result, index) => (
+            result.status === 'fulfilled' && Array.isArray(result.value.data)
+              ? result.value.data.map((order) => ({ ...order, shopId: loadedShops[index]._id }))
+              : []
+          )));
+        } else if (shopsResult) {
+          console.error('Error fetching user shops:', shopsResult.reason);
         }
 
       } catch (err) {
         console.error('Error fetching account data:', err);
-        setError('Failed to load user account info.');
+        if (err.response?.status === 401 || err.response?.status === 403) {
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          navigate('/login');
+          return;
+        }
+        setError(err.response?.data?.error || err.message || 'Failed to load user account info.');
       } finally {
         setLoading(false);
       }
@@ -52,6 +91,26 @@ const UserAccount = () => {
 
     fetchUserData();
   }, [navigate]);
+
+  const updateOrderStatus = async (shopId, cartItemId, status) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.put(
+        `http://localhost:5000/api/order/status/${shopId}`,
+        { cartItemId, status },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      const updatedOrder = response.data;
+      setOrders((currentOrders) => currentOrders.map((order) => (
+        order._id === updatedOrder._id ? updatedOrder : order
+      )));
+      setShopOrders((currentOrders) => currentOrders.map((order) => (
+        order._id === updatedOrder._id ? { ...updatedOrder, shopId } : order
+      )));
+    } catch (err) {
+      alert(err.response?.data?.error || 'Failed to update order status.');
+    }
+  };
 
   if (loading) return <div className="empty-state">Loading account details...</div>;
   if (error) return <div className="empty-state">{error}</div>;
@@ -94,9 +153,9 @@ const UserAccount = () => {
               orders.map(order => (
                 <div key={order._id} className="order-card">
                   <h4>Order #{order._id.substring(0, 8)}</h4>
-                  <p>Date: {new Date(order.createdAt).toLocaleDateString()}</p>
-                  <p>Total: ${order.totalAmount}</p>
-                  <p>Status: <span className="status-badge">{order.status}</span></p>
+                  <p>Date: {new Date(order.created).toLocaleDateString()}</p>
+                  <p>Items: {order.products?.reduce((total, item) => total + (item.quantity || 0), 0) || 0}</p>
+                  <p>Status: <span className="status-badge">{order.products?.[0]?.status || 'Not processed'}</span></p>
                 </div>
               ))
             )}
@@ -114,6 +173,29 @@ const UserAccount = () => {
                 <div key={shop._id} className="shop-card">
                   <h4>{shop.name}</h4>
                   <p>{shop.address}</p>
+                  {shopOrders
+                    .filter(order => order.shopId === shop._id)
+                    .map(order => (
+                      <div key={order._id} className="order-card">
+                        <h4>Order #{order._id.substring(0, 8)}</h4>
+                        {order.products
+                          .filter(item => String(item.shop) === String(shop._id))
+                          .map(item => (
+                            <label key={item._id} style={{ display: 'block', marginBottom: '8px' }}>
+                              Product status:
+                              <select
+                                value={item.status}
+                                onChange={(event) => updateOrderStatus(shop._id, item._id, event.target.value)}
+                                style={{ marginLeft: '8px' }}
+                              >
+                                {['Not processed', 'Processing', 'Shipped', 'Delivered', 'Cancelled'].map(status => (
+                                  <option key={status} value={status}>{status}</option>
+                                ))}
+                              </select>
+                            </label>
+                          ))}
+                      </div>
+                    ))}
                   <Link to={`/add-product/${shop._id}`} className="action-btn" style={{backgroundColor: '#4CAF50'}}>Add Product</Link>
                   <Link to={`/manage-product/${shop._id}`} className="action-btn">Manage Products</Link>                    <button 
                       onClick={() => {
